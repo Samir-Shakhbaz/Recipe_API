@@ -23,12 +23,12 @@ public class ReviewService {
     @Autowired
     RecipeService recipeService;
 
-    public Review getReviewByRating(int rating) throws NoSuchRatingException {
-        ArrayList<Review> review = reviewRepo.findByRating();
+    public ArrayList <Review> getReviewByRating(int rating) throws NoSuchRatingException {
+        ArrayList<Review> review = reviewRepo.findByRating(rating);
         if (review.isEmpty()) {
             throw new NoSuchRatingException("The review with rating " + rating + " could not be found.");
         }
-        return review.get(rating);
+        return review;
    }
 
     public Review getReviewById(Long id) throws NoSuchReviewException {
@@ -64,6 +64,12 @@ public class ReviewService {
     public Recipe postNewReview(Review review, Long recipeId) throws NoSuchRecipeException {
         Recipe recipe = recipeService.getRecipeById(recipeId);
         recipe.getReviews().add(review);
+        long count = 0;
+        for(Review review1: recipe.getReviews())
+        {
+            count +=review1.getRating();
+        }
+        recipe.setAverageRating(count/recipe.getReviews().size());
         recipeService.updateRecipe(recipe, false);
         return recipe;
     }
@@ -78,7 +84,7 @@ public class ReviewService {
         return review;
     }
 
-    public Review updateReviewById(Review reviewToUpdate) throws NoSuchReviewException {
+    public Review updateReviewById(Review reviewToUpdate, Long recipeId) throws NoSuchReviewException {
         try {
             Review review = getReviewById(reviewToUpdate.getId());
         } catch (NoSuchReviewException e) {
@@ -86,6 +92,14 @@ public class ReviewService {
                     "please double check the ID you passed in.");
         }
         reviewRepo.save(reviewToUpdate);
+        Recipe recipe = recipeService.getRecipeById(recipeId);
+        long count = 0;
+        for(Review review1: recipe.getReviews())
+        {
+            count += review1.getRating();
+        }
+        recipe.setAverageRating(count/recipe.getReviews().size());
+        recipeService.updateRecipe(recipe, false);
         return reviewToUpdate;
     }
 

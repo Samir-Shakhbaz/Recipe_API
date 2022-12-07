@@ -2,7 +2,6 @@ package com.example.Recipe.API.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.springframework.data.annotation.Id;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -54,6 +53,9 @@ public class Recipe {
     @Transient
     @JsonIgnore
     private URI locationURI;
+
+    @Column
+    private long averageRating;
 
     public void setDifficultyRating(int difficultyRating) {
         if (difficultyRating < 0 || difficultyRating > 10) {

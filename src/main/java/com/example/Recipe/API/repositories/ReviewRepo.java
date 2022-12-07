@@ -5,9 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.ArrayList;
 
-public interface ReviewRepo extends JpaRepository {
+public interface ReviewRepo extends JpaRepository<Review, Long> {
 
     ArrayList<Review> findByUsername(String username);
-    ArrayList<Review> findByRating();
+    ArrayList<Review> findByRating(Integer rating);
 
 }

@@ -1,4 +1,4 @@
-package com.example.Recipe.API;
+package com.example.Recipe.API.test;
 
 import com.example.Recipe.API.models.Ingredient;
 import com.example.Recipe.API.models.Recipe;

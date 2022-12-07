@@ -68,10 +68,10 @@ public class ReviewController {
         }
     }
 
-    @PatchMapping
-    public ResponseEntity<?> updateReviewById(@RequestBody Review reviewToUpdate) {
+    @PatchMapping("/recipe/{id}")
+    public ResponseEntity<?> updateReviewById(@RequestBody Review reviewToUpdate, @PathVariable("id") Long recipeId) {
         try {
-            Review review = reviewService.updateReviewById(reviewToUpdate);
+            Review review = reviewService.updateReviewById(reviewToUpdate, recipeId);
             return ResponseEntity.ok(review);
         } catch (NoSuchReviewException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

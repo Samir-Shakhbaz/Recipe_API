@@ -1,9 +1,12 @@
 package com.example.Recipe.API.controllers;
 
+import com.example.Recipe.API.exceptions.NoSuchRatingException;
 import com.example.Recipe.API.exceptions.NoSuchRecipeException;
 
 import com.example.Recipe.API.models.Recipe;
+import com.example.Recipe.API.models.Review;
 import com.example.Recipe.API.services.RecipeService;
+import com.example.Recipe.API.services.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +22,9 @@ public class RecipeController {
 
     @Autowired
     RecipeService recipeService;
+
+    @Autowired
+    ReviewService reviewService;
 
     @PostMapping
     public ResponseEntity<?> createNewRecipe(@RequestBody Recipe recipe) {
@@ -44,6 +50,23 @@ public class RecipeController {
     public ResponseEntity<?> getAllRecipes() {
         try {
             return ResponseEntity.ok(recipeService.getAllRecipes());
+        } catch (NoSuchRecipeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+
+    //3 ///////////////////////////////////////////////////////////////////////////////
+    @GetMapping("/search/{rating}")
+    public ResponseEntity<?> getRecipesByRating(@PathVariable("rating") Integer rating, Long recipeId, String userName) throws NoSuchRatingException {
+        try{
+            Recipe recipe = recipeService.getRecipeById(recipeId);
+            long count = 0;
+            for(Review review1: recipe.getReviews())
+            {
+                count += review1.getRating();
+            }
+           return ResponseEntity.ok(recipe);
         } catch (NoSuchRecipeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

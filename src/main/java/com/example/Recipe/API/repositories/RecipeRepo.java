@@ -13,6 +13,8 @@ public interface RecipeRepo extends JpaRepository<Recipe, Long> {
 
     ArrayList<Recipe> findByUserNameContaining(String name);
 
+    ArrayList<Recipe> findRecipeByName(String name);
+
 }
 
 

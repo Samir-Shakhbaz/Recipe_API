@@ -5,6 +5,9 @@ import com.example.Recipe.API.exceptions.NoSuchReviewException;
 import com.example.Recipe.API.models.Recipe;
 import com.example.Recipe.API.repositories.RecipeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +40,7 @@ public class RecipeService {
         return recipe;
     }
 
+    @CacheEvict(value = "recipes", allEntries = true)
     public ArrayList<Recipe> getRecipesByUserName(String userName) throws NoSuchRecipeException {
         ArrayList<Recipe> matchingRecipes = recipeRepo.findByUserNameContaining(userName);
 
@@ -49,7 +53,7 @@ public class RecipeService {
         }
         return matchingRecipes;
     }
-
+    @CachePut(value = "recipes", key = "#recipe.id")
        public ArrayList<Recipe> getRecipesByName(String name) throws NoSuchRecipeException {
         ArrayList<Recipe> matchingRecipes = recipeRepo.findByNameContaining(name);
 
@@ -63,6 +67,7 @@ public class RecipeService {
         return matchingRecipes;
     }
 
+    @Cacheable("recipes")
     public ArrayList<Recipe> getAllRecipes() throws NoSuchRecipeException {
         ArrayList<Recipe> recipes = new ArrayList<>(recipeRepo.findAll());
 
